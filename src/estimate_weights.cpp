@@ -1,6 +1,5 @@
 // Estimate weights of Levenshtein edit operations using a parallel corpus of words.
-// The weight of each edit operation is -log( #edit_applied/#all_edits)
-// i.e. the inverse of its empirical log-probability.
+// The weight of each edit operation is 1 / #count_applied_operation
 //
 // Usage: paste sourcewords.list targetwords.list | estimate_weights > weights.txt
 //
