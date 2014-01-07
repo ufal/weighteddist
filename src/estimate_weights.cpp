@@ -49,7 +49,7 @@ bool operator<(const Cell &first, const Cell &second) {
 template <class T>
 deque<Edit<typename T::value_type> > trackLevenshtein(const T& s1, const T& s2) {
   typedef typename T::value_type TVal;
-	deque<Edit<TVal> > edits;
+  deque<Edit<TVal> > edits;
 
   const int len1 = s1.size(), len2 = s2.size();
   vector<vector<Cell> > d(len1 + 1, vector<Cell>(len2 + 1));
@@ -91,40 +91,40 @@ deque<Edit<typename T::value_type> > trackLevenshtein(const T& s1, const T& s2) 
 }
 
 int main(int argc, char **argv) {
-	string line;
-	unordered_map<string, size_t> editCounts;
-	size_t totalEdits = 0;
-	while (getline(cin, line)) {
-		vector<string> cols;
-		trim_if(line, is_any_of(" "));
-		split(cols, line, is_any_of("\t"));
-		if (cols.size() != 2) die("Bad format on the following line:\n" + line + "\n");
-		const auto &edits = trackLevenshtein(utf8_to_unsigned32(cols[0]), utf8_to_unsigned32(cols[1]));
-		for (const auto &edit : edits) {
-			string editStringRep;
-			string from = unsigned32_to_utf8(vector<uint32_t>(1, edit.from));
-			string to   = unsigned32_to_utf8(vector<uint32_t>(1, edit.to));
-			if (edit.op == NOP) continue;
-			switch (edit.op) {
-				case INS:
-					editStringRep = "i\t" + to;
-					break;
-				case DEL:
-					editStringRep = "d\t" + from;
-					break;
-				case SUB:
-					editStringRep = "s\t" + from + "\t" + to;
-					break;
-				default:
-					break;
-			}
-			editCounts[editStringRep]++;
-			totalEdits++;
-		}
-	}
+  string line;
+  unordered_map<string, size_t> editCounts;
+  size_t totalEdits = 0;
+  while (getline(cin, line)) {
+    vector<string> cols;
+    trim_if(line, is_any_of(" "));
+    split(cols, line, is_any_of("\t"));
+    if (cols.size() != 2) die("Bad format on the following line:\n" + line + "\n");
+    const auto &edits = trackLevenshtein(utf8_to_unsigned32(cols[0]), utf8_to_unsigned32(cols[1]));
+    for (const auto &edit : edits) {
+      string editStringRep;
+      string from = unsigned32_to_utf8(vector<uint32_t>(1, edit.from));
+      string to   = unsigned32_to_utf8(vector<uint32_t>(1, edit.to));
+      if (edit.op == NOP) continue;
+      switch (edit.op) {
+        case INS:
+          editStringRep = "i\t" + to;
+          break;
+        case DEL:
+          editStringRep = "d\t" + from;
+          break;
+        case SUB:
+          editStringRep = "s\t" + from + "\t" + to;
+          break;
+        default:
+          break;
+      }
+      editCounts[editStringRep]++;
+      totalEdits++;
+    }
+  }
 
-	for (const auto &edit: editCounts) {
-		cout << edit.first << "\t" << 1.0 / edit.second << "\n";
-	}
+  for (const auto &edit: editCounts) {
+    cout << edit.first << "\t" << 1.0 / edit.second << "\n";
+  }
   return 0;
 }

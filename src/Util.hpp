@@ -50,46 +50,46 @@ namespace Util {
 template<class T, class Comp = std::less<T> >
 class FixedQueue {
 public:
-  FixedQueue(size_t maxSize) : maxSize(maxSize)
+  FixedQueue(size_t maxSize) : maxSize_(maxSize)
   {}
 
   void push(const T &what) {
-    if (queue.size() < maxSize) {
-      queue.push_back(what);
+    if (queue_.size() < maxSize_) {
+      queue_.push_back(what);
     } else {
-      auto it = std::max_element(queue.begin(), queue.end(), comparator);
-      if (comparator(what, *it)) *it = what; // replace the largest element
+      auto it = std::max_element(queue_.begin(), queue_.end(), comparator_);
+      if (comparator_(what, *it)) *it = what; // replace the largest element
     }
   }
 
   const T &top() const {
-    return *std::min_element(queue.begin(), queue.end(), comparator);
+    return *std::min_element(queue_.begin(), queue_.end(), comparator_);
   }
 
   void pop() {
-    queue.erase(std::min_element(queue.begin(), queue.end(), comparator));
+    queue_.erase(std::min_element(queue_.begin(), queue_.end(), comparator_));
   }
 
   const std::vector<T> &getQueue() const {
-    return queue;
+    return queue_;
   }
 
 private:
-  size_t maxSize;
-  std::vector<T> queue;
-  Comp comparator;
+  size_t maxSize_;
+  std::vector<T> queue_;
+  Comp comparator_;
 };
 
 std::vector<uint32_t> utf8_to_unsigned32(const std::string& str) {
-	std::vector<uint32_t> out;
-	utf8::utf8to32(str.begin(), str.end(), std::back_inserter(out));
-	return out;
+  std::vector<uint32_t> out;
+  utf8::utf8to32(str.begin(), str.end(), std::back_inserter(out));
+  return out;
 }
 
 std::string unsigned32_to_utf8(const std::vector<uint32_t> &str) {
-	std::string out;
-	utf8::utf32to8(str.begin(), str.end(), std::back_inserter(out));
-	return out;
+  std::string out;
+  utf8::utf32to8(str.begin(), str.end(), std::back_inserter(out));
+  return out;
 }
 
 inline void die(const std::string &msg = "") {

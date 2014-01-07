@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   int opt;
   extern char *optarg;
   extern int optind;
-  while ((opt = getopt(argc, argv, "i:d:s:n:l:c:")) != EOF) {
+  while ((opt = getopt(argc, argv, "hi:d:s:n:l:c:")) != EOF) {
     switch (opt) {
       case 'n':
         closestN = lexical_cast<size_t>(optarg);
@@ -66,6 +66,9 @@ int main(int argc, char **argv) {
       case 'c':
         maxCores = lexical_cast<size_t>(optarg);
         break;
+      case 'h':
+        cerr << usage() << endl;
+        return 0;
       default:
         die(usage());
     }
