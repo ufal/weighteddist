@@ -114,9 +114,9 @@ int main(int argc, char **argv) {
 
     auto queue = closest.getQueue();
     sort(queue.begin(), queue.end());
-    for (size_t i = 0; i < closestN; i++) {
+    for (size_t i = 0; i < queue.size(); i++) {
       cout << unsigned32_to_utf8(queue[i].second) << ":" << queue[i].first;
-      cout << (i + 1 < closestN ? "\t" : "\n");
+      cout << (i + 1 < queue.size() ? "\t" : "\n");
     }
   }
 
