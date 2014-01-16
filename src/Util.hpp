@@ -50,20 +50,35 @@ namespace Util {
 template<class T, class Comp = std::less<T> >
 class FixedQueue {
 public:
-  FixedQueue(size_t maxSize) : maxSize_(maxSize)
+  FixedQueue(size_t maxSize) : maxSize_(maxSize), validMax_(false)
   {}
 
   void push(const T &what) {
     if (queue_.size() < maxSize_) {
       queue_.push_back(what);
+      validMax_ = false;
     } else {
-      auto it = std::max_element(queue_.begin(), queue_.end(), comparator_);
-      if (comparator_(what, *it)) *it = what; // replace the largest element
+      if (! validMax_) {
+        max_ = std::max_element(queue_.begin(), queue_.end(), comparator_);
+        validMax_ = true;
+      }
+      if (comparator_(what, *max_)) {
+        *max_ = what; // replace the largest element
+        validMax_ = false;
+      }
     }
   }
 
   const T &top() const {
     return *std::min_element(queue_.begin(), queue_.end(), comparator_);
+  }
+
+  const T &max() {
+    if (! validMax_) {
+      max_ = std::max_element(queue_.begin(), queue_.end(), comparator_);
+      validMax_ = true;
+    }
+    return *max_;
   }
 
   void pop() {
@@ -78,6 +93,9 @@ private:
   size_t maxSize_;
   std::vector<T> queue_;
   Comp comparator_;
+
+  typename std::vector<T>::iterator max_;
+  bool validMax_;
 };
 
 std::vector<uint32_t> utf8_to_unsigned32(const std::string& str) {

@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -106,7 +107,8 @@ private:
 };
 
 template<class T>
-float levenshtein(const T& s1, const T& s2, const CostTable<typename T::value_type> &costs) {
+float levenshtein(const T& s1, const T& s2, const CostTable<typename T::value_type> &costs,
+    float stopAt = std::numeric_limits<float>::max()) {
   const int len1 = s1.size(), len2 = s2.size();
   std::vector<std::vector<float> > d(len1 + 1, std::vector<float>(len2 + 1));
 
@@ -124,13 +126,16 @@ float levenshtein(const T& s1, const T& s2, const CostTable<typename T::value_ty
   }
 
   for (int i = 1; i <= len1; ++i) {
+    float colMin = std::numeric_limits<float>::max();
     for (int j = 1; j <= len2; ++j) {
       d[i][j] = std::min(std::min(
             d[i - 1][j] + costs.del(s1[i - 1]),
             d[i][j - 1] + costs.ins(s2[j - 1])),
           d[i - 1][j - 1] + costs.sub(s1[i - 1], s2[j - 1]));
+      colMin = std::min(colMin, d[i][j]);
 //      cerr << d[i][j] << " ";
     }
+    if (colMin > stopAt) return colMin; // lossless pruning used by closest_word
 //    cerr << "\n";
   }
 

@@ -32,7 +32,8 @@ using namespace boost::algorithm;
 using namespace Util;
 
 string usage() {
-  return "usage: closest_word [-c cores] [-n N] [-l max_length_difference] [-i cost] [-d cost] [-s cost] costs lexicon < words > closest";
+  return "usage: closest_word [-c cores] [-n N] [-l max_length_difference]"
+    "[-i cost] [-d cost] [-s cost] costs lexicon < words > closest";
 }
 
 int main(int argc, char **argv) {
@@ -99,16 +100,18 @@ int main(int argc, char **argv) {
     vector<uint32_t> decoded = utf8_to_unsigned32(line);
     FixedQueue<pair<float, vector<uint32_t> > > closest(closestN);
     mutex queueMutex;
+    float maxDist = numeric_limits<float>::max();
 
     #pragma omp parallel for
     for (size_t idx = 0; idx < lexicon.size(); idx++) {
       const auto &lexWord = lexicon[idx];
       if (maxLengthDiff && abs(decoded.size() - lexWord.size()) > maxLengthDiff)
         continue;
-      float dist = levenshtein(lexWord, decoded, costs);
+      float dist = levenshtein(lexWord, decoded, costs, maxDist);
 
       queueMutex.lock();
       closest.push({dist, lexWord});
+      maxDist = min(closest.max().first, maxDist);
       queueMutex.unlock();
     }
 
