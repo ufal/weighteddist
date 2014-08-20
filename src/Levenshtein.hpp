@@ -135,7 +135,7 @@ float levenshtein(const T& s1, const T& s2, const CostTable<typename T::value_ty
       colMin = std::min(colMin, d[i][j]);
 //      cerr << d[i][j] << " ";
     }
-    if (colMin > stopAt) return colMin; // lossless pruning used by closest_word
+    if (colMin > stopAt) return std::numeric_limits<float>::max(); // lossless pruning used by closest_word
 //    cerr << "\n";
   }
 

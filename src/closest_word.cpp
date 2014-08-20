@@ -111,7 +111,8 @@ int main(int argc, char **argv) {
 
       queueMutex.lock();
       closest.push({dist, lexWord});
-      maxDist = min(closest.max().first, maxDist);
+      if (closest.getQueue().size() == closestN)
+        maxDist = min(closest.max().first, maxDist);
       queueMutex.unlock();
     }
 
